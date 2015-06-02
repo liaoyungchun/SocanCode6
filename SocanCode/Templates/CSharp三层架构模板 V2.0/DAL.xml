@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table" sort="5">
+  <folder>$Setting.DALFrame$\editable</folder>
+  <name>
+    <if Setting.NamespaceSuffix="">
+      <else>$Setting.NameSpaceSuffix$.</else>
+    </if>$Table.Name$
+  </name>
+  <ext>cs</ext>
+  <code>
+    <![CDATA[
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Text;
+
+namespace ]]><code trim=".">$Setting.NameSpacePrefix$.$Setting.DALFrame$.$Setting.NameSpaceSuffix$</code>
+    <![CDATA[
+{
+    /// <summary>
+    /// 数据访问类 $Table.Name$
+    /// </summary>
+    public partial class $Table.Name$ : DALHelper]]><if Setting.SlnFrame="factory"><![CDATA[, ]]><code trim=".">$Setting.NameSpacePrefix$.IDAL.$Setting.NameSpaceSuffix$</code><![CDATA[.I$Table.Name$]]></if><![CDATA[
+    {
+        /// <summary>
+        /// 增加一条数据
+        /// </summary>
+        public int Add(]]>
+    <code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code>
+    <![CDATA[.$Table.Name$ model)
+        {]]>
+    <if Setting.CommandType="SQL">
+      <![CDATA[
+            StringBuilder sbSql4$Table.Name$;]]>
+    </if>
+    <![CDATA[
+            DbParameter[] parms4$Table.Name$;]]>
+    <switch property="Setting.CommandType">
+      <case value="SP">
+        <![CDATA[
+            PrepareAddCommand(model, out parms4$Table.Name$);
+            return $Setting.DBHelperName$.ExecuteNonQuery(CommandType.StoredProcedure, "sp_$Table.Name$_Add", parms4$Table.Name$);]]>
+      </case>
+      <case value="SQL">
+        <![CDATA[
+            PrepareAddCommand(model, out sbSql4$Table.Name$, out parms4$Table.Name$);
+            return $Setting.DBHelperName$.ExecuteNonQuery(CommandType.Text, sbSql4$Table.Name$.ToString(), parms4$Table.Name$);]]>
+      </case>
+    </switch>
+    <![CDATA[
+        }
+        
+        /// <summary>
+        /// 更新一条数据
+        /// </summary>
+        public int Update(]]>
+    <code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code>
+    <![CDATA[.$Table.Name$ model)
+        {]]>
+    <if Setting.CommandType="SQL">
+      <![CDATA[
+            StringBuilder sbSql4$Table.Name$;]]>
+    </if>
+    <![CDATA[
+            DbParameter[] parms4$Table.Name$;]]>
+    <switch property="Setting.CommandType">
+      <case value="SP">
+        <![CDATA[
+            PrepareUpdateCommand(model, out parms4$Table.Name$);
+            return $Setting.DBHelperName$.ExecuteNonQuery(CommandType.StoredProcedure, "sp_$Table.Name$_Update", parms4$Table.Name$);]]>
+      </case>
+      <case value="SQL">
+        <![CDATA[
+            PrepareUpdateCommand(model, out sbSql4$Table.Name$, out parms4$Table.Name$);
+            return $Setting.DBHelperName$.ExecuteNonQuery(CommandType.Text, sbSql4$Table.Name$.ToString(), parms4$Table.Name$);]]>
+      </case>
+    </switch>
+    <![CDATA[
+        }
+        
+        /// <summary>
+        /// 删除一条数据
+        /// </summary>
+        public int Delete(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.CSharpType$ $Field.Name$, ]]></foreach><![CDATA[)]]>
+    <![CDATA[
+        {]]>
+    <if Setting.CommandType="SQL">
+      <![CDATA[
+            StringBuilder sbSql4$Table.Name$;]]>
+    </if>
+    <![CDATA[
+            DbParameter[] parms4$Table.Name$;]]>
+    <switch property="Setting.CommandType">
+      <case value="SP">
+        <![CDATA[
+            PrepareDeleteCommand(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[, out parms4$Table.Name$);
+            return $Setting.DBHelperName$.ExecuteNonQuery(CommandType.StoredProcedure, "sp_$Table.Name$_Delete", parms4$Table.Name$);]]>
+      </case>
+      <case value="SQL">
+        <![CDATA[
+            PrepareDeleteCommand(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[, out sbSql4$Table.Name$, out parms4$Table.Name$);
+            return $Setting.DBHelperName$.ExecuteNonQuery(CommandType.Text, sbSql4$Table.Name$.ToString(), parms4$Table.Name$);]]>
+      </case>
+    </switch>
+    <![CDATA[
+        }
+        
+        /// <summary>
+        /// 得到一个对象实体
+        /// </summary>
+        public ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ GetModel(]]><foreach property="Table.CondFields" trimEnd=", ">$Field.CSharpType$ $Field.Name$, </foreach><![CDATA[)
+        {]]>
+    <if Setting.CommandType="SQL">
+      <![CDATA[
+            StringBuilder sbSql4$Table.Name$;]]>
+    </if>
+    <![CDATA[
+            DbParameter[] parms4$Table.Name$;]]>
+    <switch property="Setting.CommandType">
+      <case value="SP">
+        <![CDATA[
+            PrepareGetModelCommand(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[, out parms4$Table.Name$);
+            using (DbDataReader dr = $Setting.DBHelperName$.ExecuteReader(CommandType.StoredProcedure, "sp_$Table.Name$_GetModel", parms4$Table.Name$))]]>
+      </case>
+      <case value="SQL">
+        <![CDATA[
+            PrepareGetModelCommand(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[, out sbSql4$Table.Name$, out parms4$Table.Name$);
+            using (DbDataReader dr = $Setting.DBHelperName$.ExecuteReader(CommandType.Text, sbSql4$Table.Name$.ToString(), parms4$Table.Name$))]]>
+      </case>
+    </switch>
+    <![CDATA[
+            {
+                if (dr.Read())
+                {
+                    return GetModel(dr);
+                }
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// 是否存在该记录
+        /// </summary>
+        public bool Exists(]]><foreach property="Table.CondFields" trimEnd=", ">$Field.CSharpType$ $Field.Name$, </foreach><![CDATA[)
+        {]]>
+    <if Setting.CommandType="SQL">
+      <![CDATA[
+            StringBuilder sbSql4$Table.Name$;]]>
+    </if>
+    <![CDATA[
+            DbParameter[] parms4$Table.Name$;]]>
+    <switch property="Setting.CommandType">
+      <case value="SP">
+        <![CDATA[
+            PrepareExistCommand(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[, out parms4$Table.Name$);
+            object obj = $Setting.DBHelperName$.ExecuteScalar(CommandType.StoredProcedure, "sp_$Table.Name$_Exists", parms4$Table.Name$);]]>
+      </case>
+      <case value="SQL">
+        <![CDATA[
+            PrepareExistCommand(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[, out sbSql4$Table.Name$, out parms4$Table.Name$);
+            object obj = $Setting.DBHelperName$.ExecuteScalar(CommandType.Text, sbSql4$Table.Name$.ToString(), parms4$Table.Name$);]]>
+      </case>
+    </switch>
+    <![CDATA[
+            return int.Parse(obj.ToString()) > 0;
+        }
+        
+        /// <summary>
+        /// 获取数量
+        /// </summary>
+        public int GetCount()
+        {]]>
+    <switch property="Setting.CommandType">
+      <case value="SP">
+        <![CDATA[
+            object obj = $Setting.DBHelperName$.ExecuteScalar(CommandType.StoredProcedure, "sp_$Table.Name$_GetCount", null);]]>
+      </case>
+      <case value="SQL">
+        <![CDATA[
+            object obj = $Setting.DBHelperName$.ExecuteScalar(CommandType.Text, "SELECT count(*) FROM $Table.Name$", null);]]>
+      </case>
+    </switch>
+    <![CDATA[
+            return int.Parse(obj.ToString());
+        }
+        
+        /// <summary>
+        /// 获取泛型数据列表
+        /// </summary>
+        public List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> GetList()
+        {]]>
+    <switch property="Setting.CommandType">
+      <case value="SP">
+        <![CDATA[
+            using (DbDataReader dr = $Setting.DBHelperName$.ExecuteReader(CommandType.StoredProcedure, "sp_$Table.Name$_GetAllList", null))]]>
+      </case>
+      <case value="SQL">
+        <![CDATA[
+            StringBuilder sbSql4$Table.Name$ = new StringBuilder("SELECT * FROM $Table.Name$");
+            using (DbDataReader dr = $Setting.DBHelperName$.ExecuteReader(CommandType.Text, sbSql4$Table.Name$.ToString(), null))]]>
+      </case>
+    </switch>
+    <![CDATA[
+            {
+                List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> lst = GetList(dr);
+                return lst;
+            }
+        }
+        
+        /// <summary>
+        /// 分页获取泛型数据列表
+        /// </summary>
+        public PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> GetPageList(PageInfo pi)
+        {
+            pi.RecordCount = GetCount();
+            pi.Compute();
+            
+            PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> pl = new PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$>(pi);]]>
+    <switch property="Setting.PageStyle">
+      <case value="Sql">
+        <![CDATA[
+            using (DbDataReader dr = $Setting.DBHelperName$.GetPageList("$Table.Name$", "]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[", null, pi.FirstIndex, pi.PageSize))
+            {
+                pl.List = GetList(dr);
+            }]]>
+      </case>
+      <case value="DataReader">
+        <switch property="Setting.CommandType">
+          <case value="SP">
+            <![CDATA[
+            using (DbDataReader dr = $Setting.DBHelperName$.ExecuteReader(CommandType.StoredProcedure, "sp_$Table.Name$_GetAllList", null))]]>
+          </case>
+          <case value="SQL">
+            <![CDATA[
+            using (DbDataReader dr = $Setting.DBHelperName$.ExecuteReader(CommandType.Text, "SELECT * FROM $Table.Name$", null))]]>
+          </case>
+        </switch>
+        <![CDATA[
+            {
+                pl.List = GetPageList(dr, pi.FirstIndex, pi.PageSize);
+            }]]>
+      </case>
+    </switch>
+    <![CDATA[
+            return pl;
+        }
+        
+        #region -------- 私有方法 --------
+        /// <summary>
+        /// 由一行数据得到一个实体
+        /// </summary>
+        private ]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$ GetModel(DbDataReader dr)
+        {
+            ]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$ model = new ]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$();
+            PrepareModel(model, dr);
+            return model;
+        }
+        
+        /// <summary>
+        /// 由DbDataReader得到泛型数据列表
+        /// </summary>
+        private List<]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$> GetList(DbDataReader dr)
+        {
+            List<]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$> lst = new List<]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$>();
+            while (dr.Read())
+            {
+                lst.Add(GetModel(dr));
+            }
+            return lst;
+        }]]>
+
+    <if Setting.PageStyle="DataReader">
+      <![CDATA[
+      
+        /// <summary>
+        /// 由DbDataReader得到分页泛型数据列表
+        /// </summary>
+        private List<]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$> GetPageList(DbDataReader dr, int first, int count)
+        {
+            List<]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$> lst = new List<]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$>();
+            
+            for (int i = 0; i < first; i++)
+            {
+                if (!dr.Read())
+                {
+                    return lst;
+                }
+            }
+            
+            int resultsFetched = 0;
+            while (resultsFetched < count && dr.Read())
+            {
+                lst.Add(GetModel(dr));
+                resultsFetched++;
+            }
+            
+            return lst;
+        }]]>
+    </if>
+
+    <![CDATA[
+        #endregion
+    }
+}]]>
+  </code>
+</template>

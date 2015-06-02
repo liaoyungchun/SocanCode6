@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Database" sort="7">
+  <on Setting.SlnFrame="factory" />
+  <folder>DALFactory</folder>
+  <name>DataAccess</name>
+  <ext>cs</ext>
+  <attachs>
+    <attach>
+      <source>$Setting.VSVersion$\DALFactory</source>
+      <target>DALFactory</target>
+    </attach>
+  </attachs>
+  <code>
+    <![CDATA[
+using System;
+using System.Configuration;
+using System.Collections.Generic;
+using System.Text;
+using System.Reflection;
+
+namespace DALFactory
+{
+    public class DataAccess
+    {
+        private static readonly string path = ConfigurationManager.AppSettings["WebDAL"];]]>
+    <foreach property="Database.SelectedTables">
+      <![CDATA[
+      
+        public static ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.IDAL.$Setting.NameSpaceSuffix$]]></code><![CDATA[.I$Table.Name$ Create$Setting.NameSpaceSuffix$$Table.Name$()
+        {
+            string className = ]]><if Setting.NameSpacePrefix=""><else><![CDATA["$Setting.NameSpacePrefix$." + ]]></else></if><![CDATA[path + "]]><if Setting.NameSpaceSuffix=""><else>.$Setting.NameSpaceSuffix$</else></if><![CDATA[.$Table.Name$";
+            return (]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.IDAL.$Setting.NameSpaceSuffix$]]></code><![CDATA[.I$Table.Name$)Assembly.Load(path).CreateInstance(className);
+        }]]>
+    </foreach>
+    <![CDATA[
+    }
+}]]>
+  </code>
+</template>

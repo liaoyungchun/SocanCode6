@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table" sort="3">
+  <on Setting.SlnFrame="factory" />
+  <folder>IDAL</folder>
+  <name>
+    <if Setting.NamespaceSuffix="">
+      <else>$Setting.NameSpaceSuffix$.</else>
+    </if>$Table.Name$
+  </name>
+  <ext>cs</ext>
+  <attachs>
+    <attach>
+      <source>$Setting.VSVersion$\IDAL</source>
+      <target>IDAL</target>
+    </attach>
+  </attachs>
+  <code>
+    <![CDATA[
+using System;
+using System.Data;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace ]]><code trim=".">$Setting.NameSpacePrefix$.IDAL.$Setting.NameSpaceSuffix$</code><![CDATA[
+{
+	/// <summary>
+	/// 接口层 I$Table.Name$
+	/// </summary>
+	public interface I$Table.Name$
+	{
+		/// <summary>
+		/// 增加一条数据
+		/// </summary>
+		int Add(]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$ model);
+
+		/// <summary>
+		/// 更新一条数据
+		/// </summary>
+		int Update(]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$ model);
+
+		/// <summary>
+		/// 删除一条数据
+		/// </summary>
+		int Delete(]]><foreach property="Table.CondFields" TrimEnd=", "><![CDATA[$Field.CSharpType$ $Field.Name$, ]]></foreach><![CDATA[);
+
+		/// <summary>
+		/// 是否存在该记录
+		/// </summary>
+		bool Exists(]]><foreach property="Table.CondFields" TrimEnd=", "><![CDATA[$Field.CSharpType$ $Field.Name$, ]]></foreach><![CDATA[);
+
+		/// <summary>
+		/// 得到一个对象实体
+		/// </summary>
+		]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ GetModel(]]><foreach property="Table.CondFields" TrimEnd=", "><![CDATA[$Field.CSharpType$ $Field.Name$, ]]></foreach><![CDATA[);
+
+		/// <summary>
+		/// 获取数据条数
+		/// </summary>
+		int GetCount();
+
+		/// <summary>
+		/// 获取泛型数据列表
+		/// </summary>
+		List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> GetList();
+
+		/// <summary>
+		/// 分页获取泛型数据列表
+		/// </summary>
+		PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> GetPageList(PageInfo pi);
+	}
+}
+]]>
+  </code>
+</template>

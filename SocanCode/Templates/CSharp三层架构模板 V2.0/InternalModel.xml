@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="table" sort="2">
+  <folder>Model\Internal</folder>
+  <name>
+    <if Setting.NamespaceSuffix="">
+      <else>$Setting.NameSpaceSuffix$.</else>
+    </if>$Table.Name$
+  </name>
+  <ext>cs</ext>
+  <code>
+    <!--using引用-->
+    <![CDATA[using System;]]>
+    <if Setting.ModelStyle="MVC2">
+      <![CDATA[
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;]]>
+    </if>
+
+    <![CDATA[
+
+namespace ]]><code trim="."><![CDATA[$Setting.NamespacePrefix$.Model.$Setting.NamespaceSuffix$]]></code><![CDATA[
+{
+    /// <summary>
+    /// 实体类 $Table.Name$，此类请勿动，以方便表字段更改时重新生成覆盖
+    /// </summary>
+    [Serializable]
+    public partial class $Table.Name$ : ICloneable
+    {
+        public $Table.Name$()
+        { }
+        
+        /// <summary>
+        /// 构造函数 $Table.Name$
+        /// </summary>]]>
+    <foreach property="Table.Fields">
+      <![CDATA[
+        /// <param name="]]><code style="camel">$Field.Name$</code><![CDATA[">$Field.Descn$</param>]]>
+    </foreach>
+    <![CDATA[
+        public $Table.Name$]]><foreach property="Table.Fields" prefix="(" TrimEnd=", ">
+      <![CDATA[$Field.CSharpType$ ]]><code style="camel"><![CDATA[$Field.Name$, ]]></code>
+    </foreach><![CDATA[)
+        {]]>
+    <foreach property="Table.Fields">
+      <![CDATA[
+            this.$Field.Name$ = ]]><code style="camel">$Field.Name$;</code>
+    </foreach>
+    <![CDATA[
+        }
+        
+        #region 实体属性]]>
+    <switch property="Setting.ModelStyle" TrimEnd="\r\n ">
+      <!--C#2.0样式-->
+      <case value="CS2">
+        <foreach property="Table.Fields">
+          <![CDATA[
+        private $Field.CSharpType$ _]]><code style="camel"><![CDATA[$Field.Name$;]]></code>
+        </foreach>
+        <line />
+        <foreach property="Table.Fields">
+          <![CDATA[          
+        /// <summary>
+        /// $Field.Descn$
+        /// </summary>
+        public $Field.CSharpType$ $Field.Name$
+        {
+            set { _]]><code style="camel">$Field.Name$</code><![CDATA[ = value; }
+            get { return _]]><code style="camel">$Field.Name$</code><![CDATA[; }
+        }
+        ]]>
+        </foreach>
+      </case>
+      <!--C#3.0及MVC样式-->
+      <default>
+        <foreach property="Table.Fields">
+          <![CDATA[
+        /// <summary>
+        /// $Field.Descn$
+        /// </summary>]]>
+          <if Setting.ModelStyle="MVC2">
+            <![CDATA[
+        [DisplayName("$Field.Descn$")]]]>
+            <if Field.IsIdentifier="false" Field.IsKeyField="false" Field.AllowNull="false">
+              <![CDATA[
+        [Required(ErrorMessage="{0}不能为空。")]]]>
+            </if>
+            <if Field.DbType="Xml|String|StringFixedLength|AnsiString|AnsiString">
+              <![CDATA[
+        [RegularExpression(@"[\w\W]{1,$Field.Length$}", ErrorMessage = "{0}为1－$Field.Length$位。")] //此默认生成的正则为允许任意字符，请根据业务逻辑修改]]>
+            </if>
+          </if>
+          <![CDATA[
+        public $Field.CSharpType$ $Field.Name$ { get; set; }
+        ]]>
+        </foreach>
+      </default>
+    </switch>
+    <![CDATA[
+        #endregion
+    
+        #region ICloneable 成员
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+        #endregion
+    
+        public override bool Equals(object obj)
+        {
+            ]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$ model = obj as ]]><code trim=".">$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$;
+            if (model != null]]><foreach property="Table.CondFields"><![CDATA[ && model.$Field.Name$ == this.$Field.Name$]]></foreach><![CDATA[)
+                return true;
+                
+            return false;
+        }
+        
+        public override int GetHashCode()
+        {
+            return ]]><foreach property="Table.CondFields" TrimEnd=" ^"><![CDATA[$Field.Name$.GetHashCode() ^ ]]></foreach><![CDATA[;
+        }
+    }
+}
+    ]]>
+  </code>
+</template>

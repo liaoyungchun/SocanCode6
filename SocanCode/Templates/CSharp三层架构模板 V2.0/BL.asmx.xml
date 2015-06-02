@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table" sort="9">
+  <on Setting.BLFrame="BLS" />
+  <folder>$Setting.BLFrame$</folder>
+  <name>
+    <if Setting.NamespaceSuffix="">
+      <else>$Setting.NameSpaceSuffix$.</else>
+    </if>$Table.Name$
+  </name>
+  <ext>asmx</ext>
+  <code>
+    <![CDATA[
+<%@ WebService Language="C#" CodeBehind="]]><if Setting.NameSpaceSuffix="">
+  <else>$Setting.NameSpaceSuffix$.</else>
+</if><![CDATA[$Table.Name$.asmx.cs" Class="]]><code trim=".">$Setting.NameSpacePrefix$.$Setting.BLFrame$.$Setting.NameSpaceSuffix$</code><![CDATA[.$Table.Name$" %>]]>
+  </code>
+</template>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+  <DatabaseVariablePrefix value="Database." />
+  <TableVariablePrefix value="Table." />
+  <FieldVariablePrefix value="Field." />
+  <TemplateFolder value="templates" />
+  <SettingFile value="TemplateSettings.xml" />  
+</Config>

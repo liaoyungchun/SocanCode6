@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table">
+  <name>$Table.Name$.hbm</name>
+  <ext>xml</ext>
+  <code>
+    <![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="$Setting.package$.$Table.Name$" table="$Table.Name$">]]>
+      <if Table.KeyFieldsCount="1"><for property="Table.KeyFields" start="0" end="0">
+      <![CDATA[  
+        <id name="]]><code style="camel">$Field.Name$</code><![CDATA[">
+            <generator class="]]><if Field.IsIdentifier="true">native<else>assigned</else></if><![CDATA[" />
+        </id>
+        ]]></for>
+        <else>
+          <![CDATA[
+        <composite-id>]]>
+          <foreach property="Table.KeyFields"><![CDATA[
+          <key-property name="]]><code style="camel">$Field.Name$</code><![CDATA[" />]]>
+          </foreach><![CDATA[        
+        </composite-id>
+        ]]>          
+        </else>
+      </if>
+    
+    <foreach property="Table.UnKeyFields">
+      <![CDATA[
+        <property name="]]><code style="camel">$Field.Name$</code><![CDATA["></property>]]>
+    </foreach><![CDATA[
+    </class>
+</hibernate-mapping>]]>
+  </code>
+</template>

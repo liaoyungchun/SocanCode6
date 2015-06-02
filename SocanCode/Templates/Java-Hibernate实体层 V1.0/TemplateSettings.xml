@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <setting name="package" description="命名空间" value="org.minVsmt.model" />
+</settings>

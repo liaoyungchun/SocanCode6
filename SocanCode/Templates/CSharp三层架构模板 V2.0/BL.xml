@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table" sort="10">
+  <folder>$Setting.BLFrame$</folder>
+  <name>
+    <if Setting.NamespaceSuffix="">
+      <else>$Setting.NameSpaceSuffix$.</else>
+    </if>$Table.Name$<if Setting.BLFrame="BLS">.asmx</if>
+  </name>
+  <ext>cs</ext>
+  <code>
+    <![CDATA[
+using System;]]>
+    <if Setting.SlnFrame="factory">
+      <![CDATA[
+using DALFactory;]]>
+    </if>
+    <if Setting.BLFrame="BLS">
+      <![CDATA[
+using System.Web.Services;
+using System.ComponentModel;]]>
+    </if>
+    <![CDATA[
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Caching;]]><if Setting.CacheFrame="ListCache">
+      <![CDATA[
+using System.Linq;]]>
+    </if><![CDATA[
+
+namespace ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.$Setting.BLFrame$.$Setting.NameSpaceSuffix$]]></code><![CDATA[
+{
+    /// <summary>
+    /// 业务逻辑类 $Table.Name$
+    /// </summary>]]>
+    <if Setting.BLFrame="BLS">
+      <![CDATA[
+    [WebService(Namespace = "http://www.Socansoft.com/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [ToolboxItem(false)]]]>
+    </if>
+    <![CDATA[
+    public class $Table.Name$ : BLHelper
+    {]]>
+    <if Setting.SlnFrame="factory">
+      <![CDATA[
+        private readonly ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.IDAL.$Setting.NameSpaceSuffix$]]></code><![CDATA[.I$Table.Name$ dal = DataAccess.Create$Setting.NameSpaceSuffix$$Table.Name$();]]>
+      <else>
+        <![CDATA[
+        private readonly ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.$Setting.DALFrame$.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ dal = new ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.$Setting.DALFrame$.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$();]]>
+      </else>
+    </if>
+    <![CDATA[
+      
+        public $Table.Name$()
+            : base("]]><if Setting.NameSpaceSuffix="">
+      <else><![CDATA[$Setting.NameSpaceSuffix$_]]></else>
+    </if><![CDATA[$Table.Name$_")]]>
+    <![CDATA[
+        { }
+      ]]>
+    <switch property="Setting.BLFrame">
+      <case value="BLL">
+        <![CDATA[
+        /// <summary>
+        /// 增加一条数据
+        /// </summary>]]>
+      </case>
+      <case value="BLS">
+        <![CDATA[
+        [WebMethod(Description="增加一条数据")]]]>
+      </case>
+    </switch>
+    <![CDATA[
+        public void Add(]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ model)
+        {
+            ]]><if Setting.CacheFrame="ListCache">
+      <![CDATA[int count = dal.Add(model);
+            if (EnableCache && count > 0)
+            {
+                RemoveListCache();
+            }]]><else>
+        <![CDATA[dal.Add(model);]]>
+      </else>
+    </if><![CDATA[
+        }
+        ]]>
+    <switch property="Setting.BLFrame">
+      <case value="BLL">
+        <![CDATA[
+        /// <summary>
+        /// 更新一条数据
+        /// </summary>]]>
+      </case>
+      <case value="BLS">
+        <![CDATA[
+        [WebMethod(Description="更新一条数据")]]]>
+      </case>
+    </switch>
+    <![CDATA[
+        public void Update(]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ model)
+        {]]>
+    <switch property="Setting.CacheFrame">
+      <case value="None">
+        <![CDATA[
+            dal.Update(model);]]>
+      </case>
+      <case value="ObjectCache">
+        <![CDATA[
+            int count = dal.Update(model);
+            if (EnableCache && count > 0)
+            {
+                RemoveModelCache(]]><foreach property="Table.CondFields" trimEnd=" +_&quot;"><![CDATA[model.$Field.Name$ + "_" + ]]></foreach><![CDATA[);
+            }]]>
+      </case>
+      <case value="ListCache">
+        <![CDATA[
+            int count = dal.Update(model);
+            if (EnableCache && count > 0)
+            {
+                RemoveListCache();
+            }
+      ]]>
+      </case>
+    </switch>
+    <![CDATA[
+        }
+      ]]>
+    <switch property="Setting.BLFrame">
+      <case value="BLL">
+        <![CDATA[
+        /// <summary>
+        /// 删除一条数据
+        /// </summary>]]>
+      </case>
+      <case value="BLS">
+        <![CDATA[
+        [WebMethod(Description="删除一条数据")]]]>
+      </case>
+    </switch>
+    <![CDATA[
+        public void Delete(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.CSharpType$ $Field.Name$, ]]></foreach><![CDATA[)
+        {]]>
+    <switch property="Setting.CacheFrame">
+      <case value="None">
+        <![CDATA[
+            dal.Delete(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[);]]>
+      </case>
+      <case value="ObjectCache">
+        <![CDATA[
+            int count = dal.Delete(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[);
+            if (EnableCache && count > 0)
+            {
+                RemoveModelCache(]]><foreach property="Table.CondFields" trimEnd=" +_&quot;"><![CDATA[$Field.Name$.ToString() + "_" + ]]></foreach><![CDATA[);
+            }]]>
+      </case>
+      <case value="ListCache">
+        <![CDATA[
+            int count = dal.Delete(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[);
+            if (EnableCache && count > 0)
+            {
+                RemoveListCache();
+            }]]>
+      </case>
+    </switch>
+    <![CDATA[
+        }      
+      ]]>
+    <switch property="Setting.BLFrame">
+      <case value="BLL">
+        <![CDATA[
+        /// <summary>
+        /// 是否存在该记录
+        /// </summary>]]>
+      </case>
+      <case value="BLS">
+        <![CDATA[
+        [WebMethod(Description="是否存在该记录")]]]>
+      </case>
+    </switch>
+    <![CDATA[
+        public bool Exists(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.CSharpType$ $Field.Name$, ]]></foreach><![CDATA[)
+        {
+            ]]><if Setting.CacheFrame="ListCache">
+      <![CDATA[List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> lst = GetList();
+            bool bln = (from m in lst where]]>
+      <code trimEnd="&amp;&amp;">
+        <foreach  property="Table.CondFields"><![CDATA[ m.$Field.Name$.Equals($Field.Name$) &&]]></foreach>
+      </code>
+      <![CDATA[select m).Count() > 0;
+            return bln;]]>
+      <else>
+        <![CDATA[bool bln = dal.Exists(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[);
+            return bln;]]>
+      </else>
+    </if><![CDATA[
+        }
+      ]]>
+    <switch property="Setting.BLFrame">
+      <case value="BLL">
+        <![CDATA[
+        /// <summary>
+        /// 得到一个对象实体
+        /// </summary>]]>
+      </case>
+      <case value="BLS">
+        <![CDATA[
+        [WebMethod(Description="得到一个对象实体")]]]>
+      </case>
+    </switch>
+    <![CDATA[
+        public ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ GetModel(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.CSharpType$ $Field.Name$, ]]></foreach><![CDATA[)
+        {
+            ]]>
+    <switch property="Setting.CacheFrame">
+      <case value="None">
+        <code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ model = ]]><![CDATA[dal.GetModel(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[);
+            return model;
+        ]]>
+      </case>
+      <case value="ObjectCache">
+        <code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ model = null;
+            if (!EnableCache)
+            {
+                model = dal.GetModel(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[);
+            }
+            else
+            {
+                string key = ]]><foreach property="Table.CondFields" trimEnd=" +_&quot;"><![CDATA[$Field.Name$.ToString() + "_" + ]]></foreach><![CDATA[;
+                if (GetModelCache(key) != null)
+                {
+                    model = (]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$)GetModelCache(key);
+                }
+                else
+                {
+                    model = dal.GetModel(]]><foreach property="Table.CondFields" trimEnd=", "><![CDATA[$Field.Name$, ]]></foreach><![CDATA[);
+                    TryAddModelCache(key, model, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null);
+                }
+            }
+            return model;]]>
+      </case>
+      <case value="ListCache">
+        <![CDATA[List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> lst = GetList();
+            ]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$ model = (from m in lst where]]>
+        <code trimEnd="&amp;&amp;">
+          <foreach  property="Table.CondFields"><![CDATA[ m.$Field.Name$.Equals($Field.Name$) &&]]></foreach>
+        </code>
+        <![CDATA[select m).SingleOrDefault();
+            return model;
+      ]]>
+      </case>
+    </switch>
+    <![CDATA[
+        }
+        ]]>
+    <switch property="Setting.BLFrame">
+      <case value="BLL">
+        <![CDATA[
+        /// <summary>
+        /// 获得泛型数据列表
+        /// </summary>]]>
+      </case>
+      <case value="BLS">
+        <![CDATA[
+        [WebMethod(Description="获得泛型数据列表")]]]>
+      </case>
+    </switch>
+    <![CDATA[
+        public List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> GetList()
+        {
+            ]]><if Setting.CacheFrame="ListCache">
+      <![CDATA[List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> lst = null;
+            if (!EnableCache)
+            {
+                lst = dal.GetList();
+            }
+            else
+            {
+                string key = "ALL";
+                if (GetListCache(key) != null)
+                {
+                    lst = GetListCache(key) as List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$>;
+                }
+                else
+                {
+                    lst = dal.GetList();
+                    TryAddListCache(key, lst, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+                }
+            }
+
+            return lst;]]>
+      <else>
+        <![CDATA[List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> lst = dal.GetList();
+            return lst;]]>
+      </else>
+    </if><![CDATA[
+        }
+      ]]>
+    <switch property="Setting.BLFrame">
+      <case value="BLL">
+        <![CDATA[
+        /// <summary>
+        /// 分页获取泛型数据列表
+        /// </summary>]]>
+      </case>
+      <case value="BLS">
+        <![CDATA[
+        [WebMethod(Description="分页获取泛型数据列表")]]]>
+      </case>
+    </switch>
+    <![CDATA[
+        public PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> GetPageList(PageInfo pi)
+        {
+            ]]><if Setting.CacheFrame="ListCache">
+      <![CDATA[List<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> lst = GetList();
+            pi.RecordCount = lst.Count;
+            pi.Compute();
+            PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> pl = new PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$>(pi);
+            pl.List = lst.Skip(pi.FirstIndex).Take(pi.PageSize).ToList();
+            return pl;]]>
+      <else>
+        <![CDATA[PageList<]]><code trim="."><![CDATA[$Setting.NameSpacePrefix$.Model.$Setting.NameSpaceSuffix$]]></code><![CDATA[.$Table.Name$> pl = dal.GetPageList(pi);
+            return pl;]]>
+      </else>
+    </if><![CDATA[
+        }
+    }
+}
+    ]]>
+  </code>
+</template>

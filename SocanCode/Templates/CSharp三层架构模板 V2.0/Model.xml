@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="table" sort="1">
+  <folder>Model\editable</folder>
+  <name>
+    <if Setting.NamespaceSuffix="">
+      <else>$Setting.NameSpaceSuffix$.</else>
+    </if>$Table.Name$
+  </name>
+  <ext>cs</ext>
+  <attachs>
+    <attach>
+      <source>$Setting.VSVersion$\Model</source>
+      <target>Model</target>
+    </attach>
+  </attachs>
+  <code>
+    <!--using引用-->
+    <![CDATA[
+using System;
+using System.Collections.Generic;]]>
+    <if Setting.ModelStyle="MVC2">
+      <![CDATA[
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;]]>
+    </if>
+    <![CDATA[
+
+namespace ]]><code trim="."><![CDATA[$Setting.NamespacePrefix$.Model.$Setting.NamespaceSuffix$]]></code><![CDATA[
+{
+    /// <summary>
+    /// 实体类 $Table.Name$
+    /// </summary>
+    public partial class $Table.Name$
+    { }
+}]]>
+  </code>
+</template>

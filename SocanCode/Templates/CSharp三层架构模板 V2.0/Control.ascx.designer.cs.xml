@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table" sort="13">
+  <folder>Web\Controls</folder>
+  <name>$Table.Name$Grid.ascx.designer</name>
+  <ext>cs</ext>
+  <code>
+    <![CDATA[
+/// <summary>
+/// Controls_$Setting.NameSpaceSuffix$$Table.Name$Grid 类。
+/// </summary>
+/// <remarks>
+/// 自动生成的类。
+/// </remarks>
+public partial class Controls_$Setting.NameSpaceSuffix$$Table.Name$Grid {
+    
+    /// <summary>
+    /// grd$Table.Name$ 控件。
+    /// </summary>
+    /// <remarks>
+    /// 自动生成的字段。
+    /// 要进行修改，请将字段声明从设计器文件移到代码隐藏文件。
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Repeater grd$Table.Name$;
+}]]>
+  </code>
+</template>

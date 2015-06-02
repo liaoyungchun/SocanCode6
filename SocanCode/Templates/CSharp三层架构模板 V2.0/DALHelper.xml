@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Database" sort="4">
+  <folder>$Setting.DALFrame$</folder>
+  <name>DALHelper</name>
+  <ext>cs</ext>
+  <attachs>
+    <attach>
+      <source>$Setting.VSVersion$\DBUtility</source>
+      <target>DBUtility</target>
+    </attach>
+    <attach>
+      <source>$Setting.VSVersion$\$Setting.DALFrame$</source>
+      <target>$Setting.DALFrame$</target>
+    </attach>
+  </attachs>
+  <code>
+    <![CDATA[
+//如果要从UI中设置数据库，请取消注释下一行，如果从配置中读取，请注释下一行
+//#define UISET
+
+using System;
+using System.Configuration;
+using System.Web;
+using DBUtility;
+
+namespace ]]><code trim=".">$Setting.NameSpacePrefix$.$Setting.DALFrame$.$Setting.NameSpaceSuffix$</code><![CDATA[
+{
+    public class DALHelper
+    {
+#if UISET
+        public static DbHelper dbHelper;
+
+        /// <summary>
+        /// 设置数据库连接
+        /// </summary>
+        /// <param name="dbType">不区分大小写，可选值：MySql、OleDb、Oracle、SQLite、SqlServer</param>
+        /// <param name="connectionString">数据库连接字符串</param>
+        public static void SetHelper(string dbType, string connectionString)
+        {
+            dbHelper = DbHelper.Create(dbType);
+            dbHelper.ConnectionString = connectionString;
+        } 
+#else
+        public static DbHelper dbHelper = GetHelper("DB");
+
+        /// <summary>
+        /// 从Web.config从读取数据库的连接以及数据库类型
+        /// </summary>
+        private static DbHelper GetHelper(string connectionStringName)
+        {
+            ConnectionStringSettings connectionSetting = ConfigurationManager.ConnectionStrings[connectionStringName];
+            string className = connectionSetting.ProviderName;
+            DbHelper db = DbHelper.Create(className);
+            db.ConnectionString = connectionSetting.ConnectionString;
+            return db;
+        }
+#endif
+    }
+}]]>
+  </code>
+</template>

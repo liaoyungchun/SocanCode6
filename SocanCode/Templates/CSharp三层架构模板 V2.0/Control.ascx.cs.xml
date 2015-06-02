@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table" sort="12">
+  <folder>Web\Controls</folder>
+  <name>$Table.Name$Grid.ascx</name>
+  <ext>cs</ext>
+  <code>
+    <![CDATA[
+using System;
+using System.Collections.Generic;
+using System.Web.UI.WebControls;
+
+public partial class Controls_$Setting.NameSpaceSuffix$$Table.Name$Grid : System.Web.UI.UserControl
+{
+    public event RepeaterCommandEventHandler ItemCommand;
+    public List<]]><for property="Table.CondFields" start="0" end="0"><![CDATA[$Field.CSharpType$]]></for><![CDATA[> Selected
+    {
+        get
+        {
+            List<]]><for property="Table.CondFields" start="0" end="0"><![CDATA[$Field.CSharpType$]]></for><![CDATA[> l = new List<]]><for property="Table.CondFields" start="0" end="0"><![CDATA[$Field.CSharpType$]]></for><![CDATA[>();
+            foreach (RepeaterItem item in grd$Table.Name$.Items)
+            {
+                CheckBox cb = item.FindControl("chkChoose") as CheckBox;
+                if (cb != null && cb.Checked)
+                {
+                    HiddenField fld = item.FindControl("hf$Table.Name$") as HiddenField;
+                    if (fld != null)
+                    {
+                        ]]><for property="Table.CondFields" start="0" end="0"><![CDATA[$Field.CSharpType$]]></for><![CDATA[ id = ]]><for property="Table.CondFields" start="0" end="0"><![CDATA[$Field.CSharpConvertMethod$]]></for><![CDATA[(fld.Value);
+                        l.Add(id);
+                    }
+                }
+            }
+            return l;
+        }
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+    }
+
+    public void Bind(object source)
+    {
+        grd$Table.Name$.DataSource = source;
+        grd$Table.Name$.DataBind();
+    }
+
+    protected void grd$Table.Name$_ItemCommand(object source, RepeaterCommandEventArgs e)
+    {
+        if (ItemCommand != null)
+            ItemCommand(source, e);
+    }
+}]]>
+  </code>
+</template>

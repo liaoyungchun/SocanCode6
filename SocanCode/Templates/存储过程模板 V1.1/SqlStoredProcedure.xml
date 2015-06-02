@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Database">
+  <on Database.Type="sql2000|sql2005" />
+  <name>$Database.Name$</name>
+  <ext>sql</ext>
+  <code>
+    <foreach property="Database.SelectedTables">
+      <![CDATA[
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp_$Table.Name$_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp_$Table.Name$_Add]
+GO
+/*******************************************************************************
+**说明：增加一条记录
+*******************************************************************************/
+CREATE PROCEDURE sp_$Table.Name$_Add]]>
+      <if Setting.FilterDefaultableField="false">
+        <foreach property="Table.Fields" trimEnd=", ">
+          <if Field.IsIdentifier="false">
+
+            <if Field.DbType="AnsiString|AnsiStringFixedLength|String|StringFixedLength">
+              <![CDATA[
+@in_$Field.Name$ $Field.FieldType$($Field.Length$),]]>
+              <else>
+                <![CDATA[
+@in_$Field.Name$ $Field.FieldType$,]]>
+              </else>
+            </if>
+
+          </if>
+        </foreach>
+        <else>
+          <foreach property="Table.Fields" trimEnd=", ">
+            <if Field.IsIdentifier="false" Field.DefaultValue="">
+
+              <if Field.DbType="AnsiString|AnsiStringFixedLength|String|StringFixedLength">
+                <![CDATA[
+@in_$Field.Name$ $Field.FieldType$($Field.Length$),]]>
+                <else>
+                  <![CDATA[
+@in_$Field.Name$ $Field.FieldType$,]]>
+                </else>
+              </if>
+
+            </if>
+          </foreach>
+        </else>
+      </if>
+      <![CDATA[
+AS
+INSERT INTO [$Table.Name$](]]>
+      <if Setting.FilterDefaultableField="false">
+        <foreach property="Table.Fields" trimEnd=", ">
+          <if Field.IsIdentifier="false">
+            <![CDATA[[$Field.Name$],]]>
+          </if>
+        </foreach>
+        <else>
+          <foreach property="Table.Fields" trimEnd=", ">
+            <if Field.IsIdentifier="false" Field.DefaultValue="">
+              <![CDATA[[$Field.Name$],]]>
+            </if>
+          </foreach>
+        </else>
+      </if>
+      <![CDATA[)VALUES(]]>
+      <if Setting.FilterDefaultableField="false">
+        <foreach property="Table.Fields" trimEnd=", ">
+          <if Field.IsIdentifier="false">
+            <![CDATA[@in_$Field.Name$,]]>
+          </if>
+        </foreach>
+        <else>
+          <foreach property="Table.Fields" trimEnd=", ">
+            <if Field.IsIdentifier="false" Field.DefaultValue="">
+              <![CDATA[@in_$Field.Name$,]]>
+            </if>
+          </foreach>
+        </else>
+      </if>
+      <![CDATA[)      
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp_$Table.Name$_Update]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp_$Table.Name$_Update]
+GO
+/*******************************************************************************
+**修改一条记录
+*******************************************************************************/
+CREATE PROCEDURE [sp_$Table.Name$_Update]]]>
+      <foreach property="Table.Fields" trimEnd=", ">
+        <if Field.DbType="AnsiString|AnsiStringFixedLength|String|StringFixedLength">
+          <![CDATA[
+@in_$Field.Name$ $Field.FieldType$($Field.Length$),]]>
+          <else>
+            <![CDATA[
+@in_$Field.Name$ $Field.FieldType$,]]>
+          </else>
+        </if>
+      </foreach>
+      <![CDATA[
+AS
+UPDATE [$Table.Name$] SET
+]]><foreach property="Table.UnCondFields" removeEnd=","><![CDATA[ [$Field.Name$]=@in_$Field.Name$,]]></foreach><![CDATA[
+WHERE
+]]><foreach property="Table.CondFields" removeEnd=" AND"><![CDATA[ [$Field.Name$]=@in_$Field.Name$ AND]]></foreach><![CDATA[
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp_$Table.Name$_Delete]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp_$Table.Name$_Delete]
+GO
+/*******************************************************************************
+**删除一条记录
+*******************************************************************************/
+CREATE PROCEDURE sp_$Table.Name$_Delete]]>
+      <foreach property="Table.CondFields" trimEnd=", ">
+        <if Field.DbType="AnsiString|AnsiStringFixedLength|String|StringFixedLength">
+          <![CDATA[
+@in_$Field.Name$ $Field.FieldType$($Field.Length$),]]>
+          <else>
+            <![CDATA[
+@in_$Field.Name$ $Field.FieldType$,]]>
+          </else>
+        </if>
+      </foreach>
+      <![CDATA[
+AS
+DELETE FROM [$Table.Name$] WHERE]]><foreach property="Table.CondFields" removeEnd=" AND"><![CDATA[ [$Field.Name$]=@in_$Field.Name$ AND]]></foreach><![CDATA[
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp_$Table.Name$_GetModel]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp_$Table.Name$_GetModel]
+GO
+/*******************************************************************************
+**得到一个实体
+*******************************************************************************/
+CREATE PROCEDURE sp_$Table.Name$_GetModel]]>
+      <foreach property="Table.CondFields" trimEnd=", ">
+        <if Field.DbType="AnsiString|AnsiStringFixedLength|String|StringFixedLength">
+          <![CDATA[
+@in_$Field.Name$ $Field.FieldType$($Field.Length$),]]>
+          <else>
+            <![CDATA[
+@in_$Field.Name$ $Field.FieldType$,]]>
+          </else>
+        </if>
+      </foreach>
+      <![CDATA[
+AS
+SELECT * FROM [$Table.Name$] WHERE]]><foreach property="Table.CondFields" removeEnd=" AND"><![CDATA[ [$Field.Name$]=@in_$Field.Name$ AND]]></foreach><![CDATA[
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp_$Table.Name$_Exists]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp_$Table.Name$_Exists]
+GO
+/*******************************************************************************
+**是否已经存在
+*******************************************************************************/
+CREATE PROCEDURE sp_$Table.Name$_Exists]]>
+      <foreach property="Table.CondFields" trimEnd=", ">
+        <if Field.DbType="AnsiString|AnsiStringFixedLength|String|StringFixedLength">
+          <![CDATA[
+@in_$Field.Name$ $Field.FieldType$($Field.Length$),]]>
+          <else>
+            <![CDATA[
+@in_$Field.Name$ $Field.FieldType$,]]>
+          </else>
+        </if>
+      </foreach>
+      <![CDATA[
+AS
+SELECT count(*) FROM [$Table.Name$] WHERE]]><foreach property="Table.CondFields" removeEnd=" AND"><![CDATA[ [$Field.Name$]=@in_$Field.Name$ AND]]></foreach><![CDATA[
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp_$Table.Name$_GetCount]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp_$Table.Name$_GetCount]
+GO
+/*******************************************************************************
+**获取记录条数
+*******************************************************************************/
+CREATE PROCEDURE sp_$Table.Name$_GetCount
+AS
+SELECT count(*) FROM [$Table.Name$]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp_$Table.Name$_GetAllList]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp_$Table.Name$_GetAllList]
+GO
+/*******************************************************************************
+**得到所有实体
+*******************************************************************************/
+CREATE PROCEDURE sp_$Table.Name$_GetAllList
+AS
+SELECT * FROM [$Table.Name$]
+GO]]>
+    </foreach>
+  </code>
+</template>

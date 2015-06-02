@@ -1,0 +1,153 @@
+﻿***   一个文件夹即是一套模板，可以复制给其它的人共享，只需将文件夹放到Templates文件夹下即可（如果有自定义扩展属性，请同时共享，拷由到FieldEx文件夹即可）。
+***   文件夹下的TemplateSettings.xml文件包含了模板中的选项，即自定义的一些参数，可在模板中使用Setting.xxx表示。如果不包含此文件，则界面中无选项。
+***   Settings.xml的架构可查看Settings.xsd文件。
+***   Readme.txt为模板的说明文件，在下拉选择模板时，下方会浮动显示此文档，方便查看模板的说明
+***	  通常为了新写一种语言的模板，都需要对字段的各种类型与语言中的数据类型或方法等对应，可以在FieldEx文件夹下添加字段扩展
+***   如要修改现有模板，只需要复制文件夹一份，便可任意修改，而不影响原有模板。
+
+以下为模板的写法概要：
+
+1、模板结构：
+<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table" sort="0">
+  <on ppp.xxx="vvv" />
+  <folder>$Setting.BLFrame$</folder>
+  <name>BLHelper</name>
+  <ext>cs</ext>
+  <attachs>
+	 <attach>
+		<source>这里是源目录</source>
+		<target>这里是目标目录</target>
+	 </attach>
+  </attachs>
+  <code>
+      这里是模板的内容
+  </code>
+</template>
+
+说明：
+	根节点名称为template
+		for属性 必须。表示此模板针对的是表还是库，可选项Database｜Table，如果为Database则一个库只生成一个文件，否则对每个表均生成一个文件。
+		sort属性 可选。表示此模板的排序号，在生成代码时，会按此顺序标识一一生成显示在Tab中
+
+		on节点 可选，表示在什么情况下生成此模板代码
+		folder节点 可选，表示生成文件存放的文件夹，不填表示根目录
+		name节点 可选，表示输出文件的名称，建议填写
+		ext节点 可选，表示输出文件的后缀，不填则为txt无意义，建议填写
+		attachs节点 可选，表示要附加的文件，内含一个或多个attach节点，source是一个目录，将把该目录下的文件及文件夹全部拷到target下，target可为空，表示根目录
+		code节点 必填，表示模板的内容，不填则为空无意义
+
+2、基本属性
+	2.1 Database的属性
+		Database.ConnectionString 连接字符串
+		Database.Name 数据库名
+		Database.Type 数据库类型，可选项：Access、Sql2000、Sql2005、MySql
+		Database.Tables 数据库包含的所有表，类型为List<Model.Table>
+		Database.Views 数据库包含的所有视图，类型为List<Model.Table>
+		Database.StoreProcedures 数据库包含的所有存储过程，类型为List<string>
+		Database.SelectedTables 当前选中的表或视图，类型为List<Model.Table>
+	2.2 Table的属性
+		Table.Name 表名
+		Table.Fields 表包含的所有字段，类型为：List<Model.Field>
+		Table.KeyFields 表的主键
+		Table.KeyFieldsCount 表的主键个数
+		Table.UnKeyFields 表的非主键
+		Table.UnKeyFieldsCount 表的非主键个数
+		Table.CondFields 表的约束字段，类型为：List<Model.Field>，其取值方法为首选标识，无标识则使用主键，无主键则使用第1个字段
+		Table.CondFieldsCount 表的约束字段个数
+		Table.UnCondFields 表的非约束字段，即Table.CondFields除外的其它字段，类型为：List<Model.Field>
+		Table.UnCondFieldsCount 表的非约束字段个数
+	2.3 Field的属性
+		Field.Position 字段序列
+		Field.Name 字段名
+		Field.IsIdentifier 是否是标识
+		Field.IsKeyField 是否是主键
+		Field.DbType 数据类型
+		Field.Size 占用字节数
+		Field.Length 长度
+		Field.AllowNull 是否允许空
+		Field.DefaultValue 默认值
+		Field.Descn 字段说明，如果为空或空字符，则用名称代替，如果有换行及空格，会自动去除
+		Field.xxx 其它扩展属性，由程序文件夹下的FieldEx文件夹下xml文件名决定，详见程序文件夹下的FieldEx文件夹下的“字段扩展属性说明”
+	2.4 自定义属性:模板文件夹下的TemplateSettings.xml文件即为自定义的属性，使用Setting.xxx表示，文档结构十分简单，只需参看示例即可理解，此文档的每项均在界面中生成下拉框或文本框
+		除此之外，系统还内置了一个默认的变量：
+		Setting.UseScence 表示模板当前的一样，CreateCodeForm为生成代码窗口，OutputCodeForm为输出代码窗口，例如要限制只在输出代码时产生，可以使用此变量
+
+3、逻辑节点。
+	3.1、code、CDATA和TEXT节点。表示直接输出代码，内容中需要替换的属性值必须在两端加$来表示，例如
+		<code>
+			数据库名是: $Database.Name$
+		</code>
+	3.2、if节点。表示判断，必须填写条件，中间可包含else节点，表示条件不成立时的输出。例如
+		<if Setting.BLFrame="BLL">
+			这里是要输出的内容
+			<else>
+			这里是条件不成立时的输出
+			</else>
+		</if>
+	3.3、switch节点。表示判断，必需属性property。表示要判断的内容，子节点可为case、default，例如
+		<switch property="Setting.BLFrame">
+		  <case value="BLL">
+			<![CDATA[
+			/// <summary>
+			/// 删除一条数据
+			/// </summary>]]>
+		  </case>
+		  <default>
+			<![CDATA[
+			[WebMethod(Description="删除一条数据")]]]>
+		  </default>
+		</switch>
+		请将default节点放到所有case之后，否则会直接输出default节点中的内容而忽略case节点的判断。
+	3.4、foreach节点。表示对某个属性循环，必需属性property。表示要循环的属性，
+		如果模板是for database的，则在第一层的foreach节点的property属性的值必须是List<Table>类型，其子节点可使用Table.XXX属性
+		如果模板是for table的，则在第一层的foreach节点的property属性的值必须是List<Field>类型，其子节点可使用Field.XXX属性
+	3.5、line节点，表示输出换行，可选属性：count，表示输入换行的个数
+	3.6、for节点。同foreach，但增加了start和end属性，表示循环的起始值和结束值，如不存在end节点，则表示循环至最后一个。
+	    <for property="Table.UnCondFields" start="1">
+		  <![CDATA[
+			<td>
+				$Field.Descn$
+			</td>]]>
+		</for>
+
+4、代码修饰。以下属性中的值可以使用\r\n\t，分别表示回车换行和Tab。同一节点属性可多个、可重复，顺序不同则效果也不同。
+	4.1、trim属性。表示对生成的代码作Trim('x','y')运算，例如：
+		<code trim=",.sf"> .sfsdaf,</code>
+		表示对内容实行trim(',','.')运算，最终得到结果：da
+	4.2、trimStart属性。表示表示对生成的代码作TrimStart('x','y')运算（属性值字符串被转化为字符），例如：
+		<code trimStart=",.sf"> .sfsdaf,</code>
+		表示对内容实行TrimStart(',','.')运算，最终得到结果：daf,
+	4.2、trimEnd属性。表示表示对生成的代码作TrimEnd('x','y')运算（属性值字符串被转化为字符），例如：
+		<code trimEnd=",.sf"> .sfsdaf,</code>
+		表示对内容实行TrimEnd(',','.')运算，最终得到结果：.sfsda
+	4.3、removeStart属性。表示如果生成代码以标识的值开始，则去除标识的值，例如
+		<code removeStart=",.sf"> .sfsdaf,</code>
+		得到值依然是：.sfsdaf
+		<code removeStart=".sf"> .sfsdaf,</code>
+		得到值是：sdaf,
+		请注意与trimStart的区别。
+	4.4、removeEnd属性。表示如果生成代码以标识的值结束，则去除标识的值，例如
+		<code removeEnd="af"> .sfsdaf,</code>
+		得到的值依然是：.sfsdaf
+		<code removeEnd="af,"> .sfsdaf,</code>
+		得到的值是：.sfsd
+		请注意与trimEnd的区别。
+	4.5、prefix属性，表示对生成的内容加上前缀，例如
+		<code prefix="he"> .sfsdaf,</code>
+		得到结果：he.sfsdaf,
+	4.6、suffix属性，表示对生成的内容加上后缀，例如
+		<code prefix="he"> .sfsdaf,</code>
+		得到结果：.sfsdaf,he
+	4.7、style属性，对代码样式进行修改，可选属性值：
+		upper 转化为大写，例如aBC，转化结果为ABC
+		lower 转化为小写，例如aBC，转化结果为abc
+		camel 将首字母转化为小写，例如ABc，转化结果为aBc
+		pascal 将首字母转化为大写，例如aBC，转化结果为ABC
+
+5、模板规则
+	5.1、Setting.xxx及Database.xxx可以在所有模板中使用
+	5.2、如果模板的for属性是Database，则不能使用Table.xxx和Field.xxx，但在循环节点内部可使用Table.xxx，循环内部包含了循环，则里面又可使用Field.xxx。
+	5.3、如果模板的for属性是Table，可以使用Table.xxx，不能使用Field.xxx，但在循环节点内部可使用Field.xxx
+
+	研究现有模板的写法是最好的学习方法，在大概地看了本说明后，便可查看内置模板的写法，原理很简单：代码与表达式的互相嵌套而已。

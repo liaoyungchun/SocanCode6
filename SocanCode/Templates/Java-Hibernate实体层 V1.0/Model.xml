@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Table">
+  <name>$Table.Name$</name>
+  <ext>java</ext>
+  <code>
+    <![CDATA[
+package $Setting.package$;
+
+import java.sql.Timestamp;
+import java.util.Currency;
+
+public class $Table.Name$ {]]><foreach property="Table.Fields">
+      <![CDATA[
+	private $Field.JavaType$ ]]><code style="camel">$Field.Name$</code><![CDATA[;]]>
+    </foreach><foreach property="Table.Fields">
+      <![CDATA[
+
+    public $Field.JavaType$ get]]><code style="pascal">$Field.Name$</code><![CDATA[() {
+		return ]]><code style="camel">$Field.Name$</code><![CDATA[;
+	}
+  
+	public void set]]><code style="pascal">$Field.Name$</code><![CDATA[($Field.JavaType$ ]]><code style="camel">$Field.Name$</code><![CDATA[) {
+		this.]]><code style="camel">$Field.Name$</code><![CDATA[ = ]]><code style="camel">$Field.Name$</code><![CDATA[;
+	}]]>
+    </foreach><![CDATA[	
+}]]>
+  </code>
+</template>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<template for="Database">
+  <on Database.Type="oracle" />
+  <name>$Database.Name$</name>
+  <ext>sql</ext>
+  <code>
+暂未实现自动生成Oracle存储过程，请自行编写。
+  </code>
+</template>
