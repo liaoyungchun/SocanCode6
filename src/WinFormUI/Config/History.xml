@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Config>
-  <DatabaseType value="Sql2000" />
-  <AccessConn value="" />
-  <SqlServerConn value="Data Source=127.0.0.1;User ID=sa;Password=;Initial Catalog=;" />
-  <MySqlConn value="" />
-  <OracleConn value="" />
-  <SQLiteConn value="" />
-</Config>

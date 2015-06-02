@@ -1,7 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
 <Config>
-  <DatabaseType value="Sql2000" />
-  <AccessConn value="" />
+  <DatabaseType value="Access" />
+  <AccessConn value="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=S:\SRC\FXH\Resource\省市区邮编手机数据库\省市区联动单表.mdb;Persist Security Info=True;" />
   <SqlServerConn value="Data Source=127.0.0.1;User ID=sa;Password=;Initial Catalog=;" />
   <MySqlConn value="" />
   <OracleConn value="" />

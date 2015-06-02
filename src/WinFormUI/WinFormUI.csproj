@@ -174,13 +174,6 @@
       <DependentUpon>SettingUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UseScence.cs" />
-    <Content Include="Config\History.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\模板编写简要说明.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutForm.cs</DependentUpon>
@@ -257,14 +250,7 @@
     <Compile Include="UserControls\SelectTableUserControl.Designer.cs">
       <DependentUpon>SelectTableUserControl.cs</DependentUpon>
     </Compile>
-    <Content Include="Config\Language.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Properties\app.manifest" />
-    <None Include="Templates\TemplateSettings文档架构.xsd">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DbConnections\DbConnections.csproj">
